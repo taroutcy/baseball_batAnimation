@@ -6,23 +6,23 @@
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
+#include <SDL2/SDL.h>  // SDLを用いるために必要なヘッダファイルをインクルード
+#include <assert.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
-#include <assert.h>
-#include <math.h>
-#include <SDL2/SDL.h> // SDLを用いるために必要なヘッダファイルをインクルード
 
-#define PORT (u_short)8888  /* ポート番号 */
+#define PORT (u_short)8888 /* ポート番号 */
 
-#define MAX_CLIENTS 4       /* クライアント数の最大値 */
-#define MAX_NAME_SIZE 10    /* ユーザー名の最大値*/
+#define MAX_CLIENTS 4    /* クライアント数の最大値 */
+#define MAX_NAME_SIZE 10 /* ユーザー名の最大値*/
 
-#define MAX_DATA 200        /* 送受信するデータの最大値 */
+#define MAX_DATA 200 /* 送受信するデータの最大値 */
 
-#define WINDOW_X 800 //ウィンドウサイズx
-#define WINDOW_Y 450 //ウィンドウサイズy
+#define WINDOW_X 800  // ウィンドウサイズx
+#define WINDOW_Y 450  // ウィンドウサイズy
 
 #define END_COMMAND 'E'     /* プログラム終了コマンド */
 #define DIAMOND_COMMAND 'D' /* 菱形表示コマンド */
@@ -33,20 +33,21 @@
 #define JUDGE_LOSE 'L'      /* 負けを示すコマンド */
 #define JUDGE_GOBU 'G'      /* 引き分けを示すコマンド */
 #define JUDGE_HIT 'H'       /* ヒットを示すコマンド */
-#define JUDGE_TWOBASE 'T'    /* ツーベースを示すコマンド */
-#define JUDGE_HOMERUN 'R'    /* ホームランを示すコマンド */
+#define JUDGE_TWOBASE 'T'   /* ツーベースを示すコマンド */
+#define JUDGE_HOMERUN 'R'   /* ホームランを示すコマンド */
 
 SDL_Renderer *gMainRenderer;
 
 // timerID
 SDL_TimerID my_timer_id;
+SDL_TimerID my_timer_id_bat;
 
-typedef struct // ボール用構造体
+typedef struct  // ボール用構造体
 {
-    int x; // 座標
+    int x;  // 座標
     int y;
-    int r;  // 半径
-    int xp; // 移動量(座標をどれだけ変化させるか)
+    int r;   // 半径
+    int xp;  // 移動量(座標をどれだけ変化させるか)
     int yp;
 } ball_param;
 
