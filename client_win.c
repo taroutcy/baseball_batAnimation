@@ -40,7 +40,7 @@ SDL_Texture *img_texture[3];
 joyconlib_t jc;
 
 // 一度だけアニメーションを動作させるための鍵 0:ストップ, 1：実行
-int Batter_key = 1;
+int Batter_key = 0;
 
 // バッターがどの速度でスイングするのかを示す. Speedが0, 1, 2はそれぞれ遅い, 普通, 早い
 int Batter_Speed = 0;
@@ -291,13 +291,19 @@ void *animeBatter(int i) {
     SDL_Surface *img = NULL;
     int img_size = 1000;  // 一枚の画像の縦と横の大きさ
 
-    SDL_Rect imgRect = (SDL_Rect){img_size * count_disp, 0, img_size, img_size};
-    SDL_Rect drawRect = (SDL_Rect){200, 200, 200, 200};
+    if (Batter_key == 1) {
+        SDL_Rect imgRect = (SDL_Rect){img_size * count_disp, 0, img_size, img_size};
+        SDL_Rect drawRect = (SDL_Rect){200, 200, 200, 200};
 
-    SDL_RenderCopy(gMainRenderer, img_texture[0], &imgRect, &drawRect);
-    SDL_RenderPresent(gMainRenderer);
+        SDL_RenderCopy(gMainRenderer, img_texture[0], &imgRect, &drawRect);
+        SDL_RenderPresent(gMainRenderer);
 
-    count_disp++;
+        count_disp++;
+
+        if (count_disp == img_num[0]) {
+            Batter_key = 0;
+        }
+    }
 }
 
 // どのバッターのスイングアニメーションを流すのかを判断する
@@ -369,6 +375,7 @@ void WindowEvent(int num, int clientID) {
                     case SDLK_RETURN:  // Enterキーが押された時
                         printf("enter\n");
                         flg_swing = 1;
+                        Batter_key = 1;
                         break;
                     case SDLK_ESCAPE:
                         SendEndCommand();
@@ -381,14 +388,19 @@ void WindowEvent(int num, int clientID) {
                 if (clientID == 0) {
                     if (jc.axis[2].acc_y > 40.0 || jc.axis[2].acc_y < -40.0) {
                         printf("大");
+                        flg_swing = 1;
                         Batter_Speed = 2;
                         animeBatter_JUDGE();
+
                     } else if (jc.axis[2].acc_y > 27.0 || jc.axis[2].acc_y < -27.0) {
                         printf("中");
+                        flg_swing = 1;
                         Batter_Speed = 1;
                         animeBatter_JUDGE();
+
                     } else if (jc.axis[2].acc_y > 20.0 || jc.axis[2].acc_y < -20.0) {
                         printf("小");
+                        flg_swing = 1;
                         Batter_Speed = 0;
                         animeBatter_JUDGE();
                     }
