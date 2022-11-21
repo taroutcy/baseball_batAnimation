@@ -27,6 +27,7 @@ void *animeBatter();
 // 野球関連
 int flg_swing = 0;
 SDL_Rect strike_zone = {350, 300, 100, 100};
+SDL_Rect rect_bat = {450, 500, 300, 200};
 
 // 画像関連変数
 SDL_Texture *texture2, *texture3, *texture4;
@@ -117,7 +118,7 @@ int InitWindows(int clientID, int num, char name[][MAX_NAME_SIZE]) {
     }*/
 
     /* メインのウインドウを作成する */
-    if ((gMainWindow = SDL_CreateWindow("My Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 450, 0)) == NULL) {
+    if ((gMainWindow = SDL_CreateWindow("My Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1200, 800, 0)) == NULL) {
         printf("failed to initialize videomode.\n");
         return -1;
     }
@@ -223,8 +224,7 @@ Uint32 draw_timer(Uint32 interval, void *param) {
 
 // 割り込みで呼び出す描写関数
 void *draw(void *param) {  // 描画関数
-    static ball_param ball = {400, 100, 10, 0, 10};
-    static SDL_Rect rect_bat = {350, 300, 100, 100};
+    static ball_param ball = {600, 100, 10, 0, 10};
     static SDL_Point pos_ball;
     static int flg_reverse = 0;
 
@@ -293,7 +293,7 @@ void *animeBatter() {
 
     if (flg_swing == 1) {
         SDL_Rect imgRect = (SDL_Rect){img_size * count_disp, 0, img_size, img_size};
-        SDL_Rect drawRect = (SDL_Rect){180, 210, 260, 260};
+        SDL_Rect drawRect = (SDL_Rect){300, 380, 350, 350};
 
         SDL_RenderCopy(gMainRenderer, img_texture[Batter_Speed], &imgRect, &drawRect);
         SDL_RenderPresent(gMainRenderer);
@@ -350,8 +350,6 @@ void WindowEvent(int num, int clientID) {
 
     SDL_SetRenderDrawColor(gMainRenderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(gMainRenderer);  // 背景の描画
-
-    static SDL_Rect rect_bat = {350, 300, 100, 100};
 
     SDL_SetRenderDrawColor(gMainRenderer, 255, 255, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderDrawRect(gMainRenderer, &rect_bat);  // バット(枠)の描画
