@@ -22,7 +22,7 @@ void ball_straight(SDL_Renderer *renderer, ball_param ball);
 int judge_swing(int flg_swing, SDL_Point pos_ball, SDL_Rect rect_bat);
 int judge_strike(int flg_swing, ball_param ball, SDL_Rect rect_bat);
 
-void *animeBatter(int i);
+void *animeBatter();
 
 // 野球関連
 int flg_swing = 0;
@@ -33,14 +33,14 @@ SDL_Texture *texture2, *texture3, *texture4;
 SDL_Surface *image, *image2, *image3, *image4;
 
 SDL_Surface *bat[3] = {NULL, NULL, NULL};
-int img_num[3] = {50, 40, 25};  // 分割する画像の枚数
+int img_num[3] = {40, 23, 16};  // 分割する画像の枚数
 SDL_Texture *img_texture[3];
 
 // JoyConの状態を格納する変数
 joyconlib_t jc;
 
 // 一度だけアニメーションを動作させるための鍵 0:ストップ, 1：実行
-int Batter_key = 0;
+int Batter_key = 1;
 
 // バッターがどの速度でスイングするのかを示す. Speedが0, 1, 2はそれぞれ遅い, 普通, 早い
 int Batter_Speed = 0;
@@ -244,8 +244,8 @@ void *draw(void *param) {  // 描画関数
     }
 
     /* 描画 */
-    SDL_SetRenderDrawColor(gMainRenderer, 255, 255, 0, SDL_ALPHA_OPAQUE);
-    SDL_RenderDrawRect(gMainRenderer, &rect_bat);  // バット(枠)の描画
+    // SDL_SetRenderDrawColor(gMainRenderer, 255, 255, 0, SDL_ALPHA_OPAQUE);
+    // SDL_RenderDrawRect(gMainRenderer, &rect_bat);  // バット(枠)の描画
 
     filledCircleColor(gMainRenderer, ball.x, ball.y, ball.r, 0xffffffff);
     SDL_RenderPresent(gMainRenderer);  // ボールの描画
@@ -285,22 +285,22 @@ Uint32 draw_timer_bat(Uint32 interval, void *param) {
 }
 
 // バッターアニメーションを流す
-void *animeBatter(int i) {
+void *animeBatter() {
     static int count_disp = 0;  // 表示した回数
 
     SDL_Surface *img = NULL;
     int img_size = 1000;  // 一枚の画像の縦と横の大きさ
 
-    if (Batter_key == 1) {
+    if (flg_swing == 1) {
         SDL_Rect imgRect = (SDL_Rect){img_size * count_disp, 0, img_size, img_size};
-        SDL_Rect drawRect = (SDL_Rect){200, 200, 200, 200};
+        SDL_Rect drawRect = (SDL_Rect){180, 210, 260, 260};
 
-        SDL_RenderCopy(gMainRenderer, img_texture[0], &imgRect, &drawRect);
+        SDL_RenderCopy(gMainRenderer, img_texture[Batter_Speed], &imgRect, &drawRect);
         SDL_RenderPresent(gMainRenderer);
 
         count_disp++;
 
-        if (count_disp == img_num[0]) {
+        if (count_disp == img_num[Batter_Speed]) {
             Batter_key = 0;
         }
     }
@@ -314,17 +314,17 @@ void animeBatter_JUDGE(void) {
         // 遅いスイングアニメーションを流す
         if (Batter_Speed == 0) {
             printf("遅い");
-            animeBatter(0);
+            animeBatter();
         }
         // 普通のスイングアニメーションを流す
         if (Batter_Speed == 1) {
             printf("普通");
-            animeBatter(1);
+            animeBatter();
         }
         // 早いスイングアニメーションを流す
         if (Batter_Speed == 2) {
             printf("早い");
-            animeBatter(2);
+            animeBatter();
         }
     }
 }
@@ -351,6 +351,10 @@ void WindowEvent(int num, int clientID) {
     SDL_SetRenderDrawColor(gMainRenderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(gMainRenderer);  // 背景の描画
 
+    static SDL_Rect rect_bat = {350, 300, 100, 100};
+
+    SDL_SetRenderDrawColor(gMainRenderer, 255, 255, 0, SDL_ALPHA_OPAQUE);
+    SDL_RenderDrawRect(gMainRenderer, &rect_bat);  // バット(枠)の描画
     // SDL_Surface *img = NULL;
     // int img_size = 1000;  // 一枚の画像の縦と横の大きさ
 
@@ -385,21 +389,21 @@ void WindowEvent(int num, int clientID) {
             // ジョイコンの加速度設定
             case SDL_JOYAXISMOTION:
                 // もし打者ならば
-                if (clientID == 0) {
+                if (clientID == 0 && Batter_key) {
                     if (jc.axis[2].acc_y > 40.0 || jc.axis[2].acc_y < -40.0) {
-                        printf("大");
+                        // printf("大");
                         flg_swing = 1;
                         Batter_Speed = 2;
                         animeBatter_JUDGE();
 
                     } else if (jc.axis[2].acc_y > 27.0 || jc.axis[2].acc_y < -27.0) {
-                        printf("中");
+                        // printf("中");
                         flg_swing = 1;
                         Batter_Speed = 1;
                         animeBatter_JUDGE();
 
                     } else if (jc.axis[2].acc_y > 20.0 || jc.axis[2].acc_y < -20.0) {
-                        printf("小");
+                        // printf("小");
                         flg_swing = 1;
                         Batter_Speed = 0;
                         animeBatter_JUDGE();
