@@ -34,8 +34,10 @@ SDL_Texture *texture2, *texture3, *texture4;
 SDL_Surface *image, *image2, *image3, *image4;
 
 SDL_Surface *bat[3] = {NULL, NULL, NULL};
+SDL_Surface *studium;
 int img_num[3] = {40, 23, 16};  // 分割する画像の枚数
 SDL_Texture *img_texture[3];
+SDL_Texture *studium_texture;
 
 // JoyConの状態を格納する変数
 joyconlib_t jc;
@@ -158,15 +160,19 @@ int InitWindows(int clientID, int num, char name[][MAX_NAME_SIZE]) {
     }
 
     // バットの画像読み込み
-    bat[0] = IMG_Load("bat/slow.png");
-    bat[1] = IMG_Load("bat/normal.png");
-    bat[2] = IMG_Load("bat/fast.png");
+    bat[0] = IMG_Load("picture/bat/slow.png");
+    bat[1] = IMG_Load("picture/bat/normal.png");
+    bat[2] = IMG_Load("picture/bat/fast.png");
+
+    studium = IMG_Load("picture/stadium.png");
 
     img_texture[0] = SDL_CreateTextureFromSurface(gMainRenderer, bat[0]);
     img_texture[1] = SDL_CreateTextureFromSurface(gMainRenderer, bat[1]);
     img_texture[2] = SDL_CreateTextureFromSurface(gMainRenderer, bat[2]);
 
-    if (!bat[0] || !bat[1] || !bat[2]) {
+    studium_texture = SDL_CreateTextureFromSurface(gMainRenderer, studium);
+
+    if (!bat[0] || !bat[1] || !bat[2] || !studium) {
         printf("img not read\n");
     }
 
@@ -293,7 +299,7 @@ void *animeBatter() {
 
     if (flg_swing == 1) {
         SDL_Rect imgRect = (SDL_Rect){img_size * count_disp, 0, img_size, img_size};
-        SDL_Rect drawRect = (SDL_Rect){300, 380, 350, 350};
+        SDL_Rect drawRect = (SDL_Rect){200, 360, 430, 430};
 
         SDL_RenderCopy(gMainRenderer, img_texture[Batter_Speed], &imgRect, &drawRect);
         SDL_RenderPresent(gMainRenderer);
@@ -351,15 +357,13 @@ void WindowEvent(int num, int clientID) {
     SDL_SetRenderDrawColor(gMainRenderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(gMainRenderer);  // 背景の描画
 
+    SDL_Rect stdRect = {0, 0, 1800, 1200};
+    SDL_Rect drawStdRect = {0, 0, 1200, 800};
+
+    SDL_RenderCopy(gMainRenderer, studium_texture, &stdRect, &drawStdRect);
+
     SDL_SetRenderDrawColor(gMainRenderer, 255, 255, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderDrawRect(gMainRenderer, &rect_bat);  // バット(枠)の描画
-    // SDL_Surface *img = NULL;
-    // int img_size = 1000;  // 一枚の画像の縦と横の大きさ
-
-    // SDL_Rect imgRect = (SDL_Rect){0, 0, img_size, img_size};
-    // SDL_Rect drawRect = (SDL_Rect){0, 0, 100, 100};
-
-    // SDL_RenderCopy(gMainRenderer, img_texture[0], &imgRect, &drawRect);
 
     // イベントを取得したなら
     while (SDL_PollEvent(&event)) {
