@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
     }
 
     /* タイマー設定 */
-    my_timer_id_bat = SDL_AddTimer(33, draw_timer_bat, (void *)gMainRenderer);
+    my_timer_id_bat = SDL_AddTimer(35, draw_timer_bat, (void *)gMainRenderer);
     my_timer_id_pitcher = SDL_AddTimer(33, draw_timer_pitcher, (void *)gMainRenderer);
     my_timer_id = SDL_AddTimer(33, draw_timer, (void *)gMainRenderer);
 

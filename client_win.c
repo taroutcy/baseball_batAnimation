@@ -299,10 +299,11 @@ void *animeBatter() {
 
     SDL_Surface *img = NULL;
     int img_size = 1000;  // 一枚の画像の縦と横の大きさ
+    int draw_size = 600;
 
     if (flg_swing == 1) {
         SDL_Rect imgRect = (SDL_Rect){img_size * count_disp, 0, img_size, img_size};
-        SDL_Rect drawRect = (SDL_Rect){200, 360, 430, 430};
+        SDL_Rect drawRect = (SDL_Rect){80, 220, draw_size, draw_size};
 
         SDL_RenderCopy(gMainRenderer, img_texture[Batter_Speed], &imgRect, &drawRect);
         SDL_RenderPresent(gMainRenderer);
