@@ -392,19 +392,19 @@ void WindowEvent(int num, int clientID) {
             case SDL_JOYAXISMOTION:
                 // もし打者ならば
                 if (clientID == 0 && Batter_key) {
-                    if (jc.axis[2].acc_y > 40.0 || jc.axis[2].acc_y < -40.0) {
+                    if (jc.axis[2].acc_y > 25.0 || jc.axis[2].acc_y < -25.0) {
                         // printf("大");
                         flg_swing = 1;
                         Batter_Speed = 2;
                         animeBatter_JUDGE();
 
-                    } else if (jc.axis[2].acc_y > 27.0 || jc.axis[2].acc_y < -27.0) {
+                    } else if (jc.axis[2].acc_y > 20.0 || jc.axis[2].acc_y < -20.0) {
                         // printf("中");
                         flg_swing = 1;
                         Batter_Speed = 1;
                         animeBatter_JUDGE();
 
-                    } else if (jc.axis[2].acc_y > 20.0 || jc.axis[2].acc_y < -20.0) {
+                    } else if (jc.axis[2].acc_y > 15.0 || jc.axis[2].acc_y < -15.0) {
                         // printf("小");
                         flg_swing = 1;
                         Batter_Speed = 0;
