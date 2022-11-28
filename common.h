@@ -41,6 +41,7 @@ SDL_Renderer *gMainRenderer;
 // timerID
 SDL_TimerID my_timer_id;
 SDL_TimerID my_timer_id_bat;
+SDL_TimerID my_timer_id_pitcher;
 
 typedef struct  // ボール用構造体
 {

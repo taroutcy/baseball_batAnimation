@@ -23,6 +23,7 @@ int judge_swing(int flg_swing, SDL_Point pos_ball, SDL_Rect rect_bat);
 int judge_strike(int flg_swing, ball_param ball, SDL_Rect rect_bat);
 
 void *animeBatter();
+void *drawPitcher();
 
 // 野球関連
 int flg_swing = 0;
@@ -35,9 +36,11 @@ SDL_Surface *image, *image2, *image3, *image4;
 
 SDL_Surface *bat[3] = {NULL, NULL, NULL};
 SDL_Surface *studium;
+SDL_Surface *pitcher;
 int img_num[3] = {40, 23, 16};  // 分割する画像の枚数
 SDL_Texture *img_texture[3];
 SDL_Texture *studium_texture;
+SDL_Texture *pitcher_texture;
 
 // JoyConの状態を格納する変数
 joyconlib_t jc;
@@ -163,16 +166,16 @@ int InitWindows(int clientID, int num, char name[][MAX_NAME_SIZE]) {
     bat[0] = IMG_Load("picture/bat/slow.png");
     bat[1] = IMG_Load("picture/bat/normal.png");
     bat[2] = IMG_Load("picture/bat/fast.png");
-
+    pitcher = IMG_Load("picture/pitcher.png");
     studium = IMG_Load("picture/stadium.png");
 
     img_texture[0] = SDL_CreateTextureFromSurface(gMainRenderer, bat[0]);
     img_texture[1] = SDL_CreateTextureFromSurface(gMainRenderer, bat[1]);
     img_texture[2] = SDL_CreateTextureFromSurface(gMainRenderer, bat[2]);
-
+    pitcher_texture = SDL_CreateTextureFromSurface(gMainRenderer, pitcher);
     studium_texture = SDL_CreateTextureFromSurface(gMainRenderer, studium);
 
-    if (!bat[0] || !bat[1] || !bat[2] || !studium) {
+    if (!bat[0] || !bat[1] || !bat[2] || !studium || !pitcher) {
         printf("img not read\n");
     }
 
@@ -310,6 +313,37 @@ void *animeBatter() {
             Batter_key = 0;
         }
     }
+}
+
+Uint32 draw_timer_pitcher(Uint32 interval, void *param) {
+    SDL_Event event;
+    SDL_UserEvent userevent;
+
+    /* コールバックでSDL_USEREVENTイベントをキューに入れる。
+    このコールバック関数は一定の周期で再び呼ばれる */
+
+    userevent.type = SDL_USEREVENT;
+    userevent.code = 0;
+    userevent.data1 = &drawPitcher;
+    userevent.data2 = param;
+
+    event.type = SDL_USEREVENT;
+    event.user = userevent;
+
+    SDL_PushEvent(&event);
+    return (interval);
+}
+
+// 割り込みで呼び出す描写関数
+void *drawPitcher(void *param) {  // 描画関数
+    int img_size = 1000;
+    int draw_size = 200;
+
+    SDL_Rect imgRect = (SDL_Rect){0, 0, img_size, img_size};
+    SDL_Rect drawRect = (SDL_Rect){1200 / 2 - draw_size / 2, 280, draw_size, draw_size};
+
+    SDL_RenderCopy(gMainRenderer, pitcher_texture, &imgRect, &drawRect);
+    SDL_RenderPresent(gMainRenderer);
 }
 
 // どのバッターのスイングアニメーションを流すのかを判断する
