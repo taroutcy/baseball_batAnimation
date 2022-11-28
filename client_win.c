@@ -36,11 +36,11 @@ SDL_Surface *image, *image2, *image3, *image4;
 
 SDL_Surface *bat[3] = {NULL, NULL, NULL};
 SDL_Surface *studium;
-SDL_Surface *pitcher;
+SDL_Surface *pitcher[2];        // 投げる前と後の画像
 int img_num[3] = {40, 23, 16};  // 分割する画像の枚数
 SDL_Texture *img_texture[3];
 SDL_Texture *studium_texture;
-SDL_Texture *pitcher_texture;
+SDL_Texture *pitcher_texture[2];
 
 // JoyConの状態を格納する変数
 joyconlib_t jc;
@@ -166,18 +166,20 @@ int InitWindows(int clientID, int num, char name[][MAX_NAME_SIZE]) {
     bat[0] = IMG_Load("picture/bat/slow.png");
     bat[1] = IMG_Load("picture/bat/normal.png");
     bat[2] = IMG_Load("picture/bat/fast.png");
-    pitcher = IMG_Load("picture/pitcher.png");
+    pitcher[0] = IMG_Load("picture/pitcher/before.png");
+    pitcher[1] = IMG_Load("picture/pitcher/after.png");
     studium = IMG_Load("picture/stadium.png");
+
+    if (!bat[0] || !bat[1] || !bat[2] || !studium || !pitcher[0] || !pitcher[1]) {
+        printf("img not read\n");
+    }
 
     img_texture[0] = SDL_CreateTextureFromSurface(gMainRenderer, bat[0]);
     img_texture[1] = SDL_CreateTextureFromSurface(gMainRenderer, bat[1]);
     img_texture[2] = SDL_CreateTextureFromSurface(gMainRenderer, bat[2]);
-    pitcher_texture = SDL_CreateTextureFromSurface(gMainRenderer, pitcher);
+    pitcher_texture[0] = SDL_CreateTextureFromSurface(gMainRenderer, pitcher[0]);
+    pitcher_texture[1] = SDL_CreateTextureFromSurface(gMainRenderer, pitcher[1]);
     studium_texture = SDL_CreateTextureFromSurface(gMainRenderer, studium);
-
-    if (!bat[0] || !bat[1] || !bat[2] || !studium || !pitcher) {
-        printf("img not read\n");
-    }
 
     stringColor(gMainRenderer, 380, 20, "Win:", 0xffffffff);       // 勝ち数を表示
     stringColor(gMainRenderer, 350, 40, "HIKIWAKE:", 0xffffffff);  // 引き分け数を表示
@@ -338,12 +340,14 @@ Uint32 draw_timer_pitcher(Uint32 interval, void *param) {
 // 割り込みで呼び出す描写関数
 void *drawPitcher(void *param) {  // 描画関数
     int img_size = 1000;
-    int draw_size = 200;
+    int draw_size = 270;
+    int blur = 5;
+    static int count = 1;
 
     SDL_Rect imgRect = (SDL_Rect){0, 0, img_size, img_size};
-    SDL_Rect drawRect = (SDL_Rect){1200 / 2 - draw_size / 2, 280, draw_size, draw_size};
+    SDL_Rect drawRect = (SDL_Rect){1200 / 2 - draw_size / 2, 210, draw_size, draw_size};
 
-    SDL_RenderCopy(gMainRenderer, pitcher_texture, &imgRect, &drawRect);
+    SDL_RenderCopy(gMainRenderer, pitcher_texture[0], &imgRect, &drawRect);
     SDL_RenderPresent(gMainRenderer);
 }
 
